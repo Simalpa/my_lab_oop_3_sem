@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace lab5_oop_kurs3
 {
     class Program
     {
         public delegate void Delegate();
-        public delegate bool Delegate2(int seats);
+        public delegate void Delegate2(int seats, ref int boughtTickets);
 
 
         class Cinema
@@ -35,11 +31,9 @@ namespace lab5_oop_kurs3
 
             public void SellTickets()
             {
-                if (sell_tickets(number_of_seats - bought_tickets))
-                {
-                    bought_tickets++;
-                }
-                else
+                Console.WriteLine("///Прошло событие: продажа билетов");
+                sell_tickets(number_of_seats, ref bought_tickets);
+                if(bought_tickets == number_of_seats)
                 {
                     Console.WriteLine("Распроданы все билеты!");
                 }
@@ -47,6 +41,7 @@ namespace lab5_oop_kurs3
 
             public void ShowMovie()
             {
+                Console.WriteLine("///Прошло событие: показ фильма");
                 if (bought_tickets == 0)
                 {
                     Console.WriteLine("Никто не купил билеты! Зачем показывать фильм?");
@@ -54,12 +49,12 @@ namespace lab5_oop_kurs3
                 else
                 {
                     showMovie();
-                    bought_tickets = 0;
                 }
             }
 
             public void PrintReviews()
             {
+                Console.WriteLine("///Прошло событие: мнение после фильма");
                 Console.WriteLine("Кинотеатр: " + name);
                 Console.WriteLine("Адрес кинотеатра: " + adress);
                 Console.WriteLine("Фильм: " + name_premiere_film);
@@ -73,7 +68,7 @@ namespace lab5_oop_kurs3
 
         class Viewer
         {
-            Random rand = new Random();
+            public static Random rand = new Random();
             private string name;
             private int ratingFilm = int.MinValue;
             bool watched = false;
@@ -84,17 +79,28 @@ namespace lab5_oop_kurs3
                 name = _name;
             }
 
+            public void BuyTicket(int seats, ref int boughtTickets)
+            {
+                if(seats > boughtTickets)
+                {
+                    bought_ticket = true;
+                    boughtTickets++;
+
+                }
+            }
+
+
             public void WatchFilm()
             {
                 if (bought_ticket)
                 {
                     ratingFilm = rand.Next(101);
-                    watched = false;
+                    watched = true;
                     bought_ticket = false;
                 }
                 else
                 {
-                    Console.WriteLine(name + ": Я еще даже не купил билет на фильм!");
+                    Console.WriteLine(name + ": Я еще даже не купил(а) билет на фильм!");
                 }
             }
 
@@ -102,13 +108,13 @@ namespace lab5_oop_kurs3
 
             public void ChangeMind()
             {
-                if(watched)
+                if (watched)
                 {
                     ratingFilm = rand.Next(101);
                 }
                 else
                 {
-                    Console.WriteLine(name + ": У меня пока что нет мнения об этом фильме. Я еще не смотрел фильм!");
+                    Console.WriteLine(name + ": У меня пока что нет мнения об этом фильме. Я еще не смотрел(а) фильм!");
                 }
             }
 
@@ -116,7 +122,7 @@ namespace lab5_oop_kurs3
             {
                 if(watched)
                 {
-                    Console.WriteLine(name + ": ");
+                    Console.Write(name + ": ");
                     if(0 <= ratingFilm && ratingFilm <= 10)
                     {
                         Console.WriteLine("Ужасно!");
@@ -156,14 +162,39 @@ namespace lab5_oop_kurs3
                 }
                 else
                 {
-                    Console.WriteLine(name + ": Не могу ничего сказать, еще не смотрел фильм.");
+                    Console.WriteLine(name + ": Не могу ничего сказать, еще не смотрел(а) фильм.");
                 }
             }
         }
 
         static void Main(string[] args)
         {
+            Cinema cinema = new Cinema("Комета", "Кострома ул.Керосинова д 16", "Человек паук 2", 690, 100);
 
+            Viewer[] viewers =
+            {
+                new Viewer("Вася"),
+                new Viewer("Петя"),
+                new Viewer("Маша"),
+                new Viewer("Света"),
+                new Viewer("Вика"),
+                new Viewer("Вероника"),
+                new Viewer("Гурген")
+            };
+
+            foreach(Viewer viewer in viewers)
+            {
+                cinema.sell_tickets += viewer.BuyTicket;
+                cinema.showMovie += viewer.WatchFilm;
+                cinema.printReviews += viewer.SayReview;
+            }
+
+            cinema.SellTickets();
+            cinema.ShowMovie();
+            cinema.PrintReviews();
+
+
+            Console.ReadKey();
         }
     }
 }
