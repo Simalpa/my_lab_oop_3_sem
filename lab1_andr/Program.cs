@@ -12,9 +12,9 @@ namespace lab1_andr
         {
             string firm;
             int price;
-            int length;
-            int width;
-            int height;
+            float length;
+            float width;
+            float height;
             static public int count = 0;
 
             public Sofa()
@@ -22,7 +22,7 @@ namespace lab1_andr
                 count++;
             }
 
-            public void InitFields(string f, int p, int l, int w, int h)
+            public void InitFields(string f, int p, float l, float w, float h)
             {
                 firm = f;
                 price = p;
@@ -38,7 +38,7 @@ namespace lab1_andr
                 Console.WriteLine($"Длина - {length}");
                 Console.WriteLine($"Ширина - {width}");
                 Console.WriteLine($"Высота - {height}");
-
+                Console.WriteLine();
             }
         }
 
@@ -49,7 +49,17 @@ namespace lab1_andr
             Sofa sofa2 = new Sofa();
             Sofa sofa3 = new Sofa();
 
-            sofa1.InitFields("Альба", )
+            sofa1.InitFields("Альба", 45000, 3, 1.5f, 1);
+            sofa2.InitFields("Боска", 98000, 4, 1.3f, 1.5f);
+            sofa3.InitFields("Нивала", 69000, 3.5f, 1, 1.15f);
+
+            sofa1.PrintFields();
+            sofa2.PrintFields();
+            sofa3.PrintFields();
+
+            Console.WriteLine("Общее количество объектов: {0}", Sofa.count);
+
+            Console.ReadKey();
 
         }
     }
